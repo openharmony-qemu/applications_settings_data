@@ -149,7 +149,7 @@ class SettingsDBHelper {
       this.DEFAULT_USER_ID + SettingsDBHelper.TABLE_CREATE_SUFFIX, []);
     if (this.isFirstStartup) {
       Log.info('loadDefaultSettingsData begin');
-      this.loadDefaultSettingsData();
+      await this.loadDefaultSettingsData();
       Log.info('loadDefaultSettingsData finish');
       await this.initialInsert(SettingsDataConfig.TABLE_NAME);
       await this.initialInsert(SettingsDataConfig.USER_TABLE_NAME + '_' + this.DEFAULT_USER_ID);
@@ -197,13 +197,13 @@ class SettingsDBHelper {
     }
     switch (tableType) {
       case TableType.SETTINGS:
-        this.loadDefaultTaleData(content.settings, TableType.SETTINGS, userId);
+        await this.loadDefaultTaleData(content.settings, TableType.SETTINGS, userId);
         return;
       case TableType.USER:
-        this.loadDefaultTaleData(content.user, TableType.USER, userId);
+        await this.loadDefaultTaleData(content.user, TableType.USER, userId);
         return;
       case TableType.USER_SECURE:
-        this.loadDefaultTaleData(content.userSecure, TableType.USER_SECURE, userId);
+        await this.loadDefaultTaleData(content.userSecure, TableType.USER_SECURE, userId);
         return;
       default:
         Log.error('invalid type');
@@ -323,7 +323,7 @@ class SettingsDBHelper {
   }
   private async loadDefaultTaleData(tableData: Array<Map<string, string>>, tableType: TableType,
                                     userID: number): Promise<void> {
-    if (tableData?.length <= 0) {
+    if (!tableData || tableData.length === 0) {
       Log.error(`${tableType} table data is empty`);
       return;
     }
